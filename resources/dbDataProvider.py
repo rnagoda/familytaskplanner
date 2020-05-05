@@ -40,26 +40,28 @@ def run_query_return_list(query) -> list:
 def get_list_of_projects() -> list:
     """
     Return a list of projects from the DB
-
-    :return: Project list
+    :return: result of query
     """
+
     query = 'SELECT * FROM projects'
     project_list = run_query_return_list(query)
     return project_list
 
 
-def get_list_of_projects_status_started() -> list:
+def get_list_of_projects_with_status(status) -> list:
     """
-    Return a list of projects with status 'Started'
+    Return a list of projects with a particular status
+    :return: result of query
+    """
 
-    :return: Project list
-    """
+    # TODO: Need to add some validation on what status values can be passed/handled here
+
     query = f"SELECT * " \
             "FROM projects " \
             "WHERE status = " \
             "(SELECT id " \
             "FROM " + config_vals.status_table + " "\
-            "WHERE name = 'started');"
+            "WHERE name = '" + status + "');"
 
     project_list = run_query_return_list(query)
 
@@ -69,10 +71,23 @@ def get_list_of_projects_status_started() -> list:
 def get_list_of_statuses() -> list:
     """
     Return a list of project statuses
-
-    :return: Status list
+    :return: result of query
     """
 
     query = f"SELECT * FROM {config_vals.status_table}"
 
     return run_query_return_list(query)
+
+
+def get_dict_of_statuses() -> dict:
+    """
+    Return a dict with status id as the key and status name as the value
+    :return:
+    """
+
+    status_list = get_list_of_statuses()
+    statuses = {}
+    for status in status_list:
+        statuses[status[0]] = status[1]
+
+    return statuses
